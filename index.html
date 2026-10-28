@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stocka - Gestión Digital de Inventarios y Ventas</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#ecfdf5',
+                            100: '#d1fae5',
+                            500: '#10b981',
+                            600: '#059669',
+                            700: '#047857',
+                            900: '#064e3b',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Modern scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 9999px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 font-sans text-slate-800 antialiased min-h-screen flex flex-col justify-between selection:bg-brand-500 selection:text-white">
+
+    <!-- TOP HEADER INSTITUCIONAL -->
+    <header class="bg-slate-900 text-white sticky top-0 z-40 shadow-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <!-- Logo Brand -->
+            <div class="flex items-center space-x-3">
+                <div class="bg-brand-500 p-2.5 rounded-xl shadow-lg shadow-brand-500/30 flex items-center justify-center text-white font-extrabold text-xl">
+                    <i class="fa-solid fa-boxes-stacked"></i>
+                </div>
+                <div>
+                    <span class="text-2xl font-black tracking-tight text-white">Stocka<span class="text-brand-500">.</span></span>
+                    <span class="hidden sm:inline-block text-xs bg-slate-800 text-slate-300 px-2.5 py-0.5 rounded-full ml-2 font-medium border border-slate-700">Comercio de Barrio</span>
+                </div>
+            </div>
+
+            <!-- User and Cloud Status -->
+            <div class="flex items-center space-x-4">
+                <div class="hidden md:flex flex-col text-right">
+                    <span class="text-xs text-slate-400 font-medium">Comercio Activo</span>
+                    <span class="text-sm font-semibold text-slate-100">Tienda Don Carlos</span>
+                </div>
+                <!-- Status Badge -->
+                <div id="cloudStatus" class="flex items-center space-x-2 bg-emerald-950/80 border border-emerald-500/40 text-emerald-400 text-xs px-3 py-1.5 rounded-full font-medium transition-all duration-300">
+                    <span class="relative flex h-2.5 w-2.5">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+                    </span>
+                    <span class="hidden xs:inline">Nube Sincronizada</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- METODOLOGÍA SECUENCIA VISUAL -->
+    <div class="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 text-white border-t border-slate-800 py-2.5 shadow-inner">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between text-xs overflow-x-auto whitespace-nowrap scrollbar-none py-1 gap-2">
+                <span class="text-slate-400 font-bold uppercase tracking-wider text-[10px]">Metodología Stocka:</span>
+                <div class="flex items-center space-x-1 sm:space-x-2 font-semibold">
+                    <span class="bg-slate-800 text-slate-300 px-2.5 py-1 rounded-md border border-slate-700 flex items-center gap-1.5"><i class="fa-solid fa-pen-to-square text-brand-500"></i> 1. REGISTRAR</span>
+                    <i class="fa-solid fa-chevron-right text-slate-600 text-[10px]"></i>
+                    <span class="bg-slate-800 text-slate-300 px-2.5 py-1 rounded-md border border-slate-700 flex items-center gap-1.5"><i class="fa-solid fa-folder-tree text-blue-400"></i> 2. ORGANIZAR</span>
+                    <i class="fa-solid fa-chevron-right text-slate-600 text-[10px]"></i>
+                    <span class="bg-slate-800 text-slate-300 px-2.5 py-1 rounded-md border border-slate-700 flex items-center gap-1.5"><i class="fa-solid fa-chart-pie text-purple-400"></i> 3. ANALIZAR</span>
+                    <i class="fa-solid fa-chevron-right text-slate-600 text-[10px]"></i>
+                    <span class="bg-slate-800 text-slate-300 px-2.5 py-1 rounded-md border border-slate-700 flex items-center gap-1.5"><i class="fa-solid fa-triangle-exclamation text-rose-400"></i> 4. ALERTAR</span>
+                    <i class="fa-solid fa-chevron-right text-slate-600 text-[10px]"></i>
+                    <span class="bg-brand-500 text-slate-950 font-bold px-2.5 py-1 rounded-md shadow-sm flex items-center gap-1.5"><i class="fa-solid fa-bolt"></i> 5. ACTUAR</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN CONTAINER -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6 flex-grow w-full">
+
+        <!-- RESUMEN EN TIEMPO REAL (KPI METRICS) -->
+        <section class="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
+            <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-md transition-shadow">
+                <div class="flex items-center justify-between text-slate-500 mb-2">
+                    <span class="text-xs font-semibold uppercase tracking-wider">Ventas Hoy</span>
+                    <div class="p-2 bg-emerald-50 text-brand-600 rounded-xl">
+                        <i class="fa-solid fa-cash-register text-sm"></i>
+                    </div>
+                </div>
+                <div class="text-xl sm:text-2xl font-black text-slate-900" id="kpiVentas">$184.500</div>
+                <span class="text-[11px] text-emerald-600 font-medium flex items-center gap-1 mt-1">
+                    <i class="fa-solid fa-arrow-trend-up"></i> +12% vs ayer
+                </span>
+            </div>
+
+            <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-md transition-shadow">
+                <div class="flex items-center justify-between text-slate-500 mb-2">
+                    <span class="text-xs font-semibold uppercase tracking-wider">Total Productos</span>
+                    <div class="p-2 bg-blue-50 text-blue-600 rounded-xl">
+                        <i class="fa-solid fa-boxes-stacked text-sm"></i>
+                    </div>
+                </div>
+                <div class="text-xl sm:text-2xl font-black text-slate-900" id="kpiTotalProds">8 Productos</div>
+                <span class="text-[11px] text-slate-500 font-medium mt-1 block">En catálogo activo</span>
+            </div>
+
+            <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-md transition-shadow">
+                <div class="flex items-center justify-between text-slate-500 mb-2">
+                    <span class="text-xs font-semibold uppercase tracking-wider">Stock Crítico</span>
+                    <div class="p-2 bg-rose-50 text-rose-600 rounded-xl">
+                        <i class="fa-solid fa-triangle-exclamation text-sm"></i>
+                    </div>
+                </div>
+                <div class="text-xl sm:text-2xl font-black text-rose-600" id="kpiStockCritico">2 Alertas</div>
+                <span class="text-[11px] text-rose-500 font-medium mt-1 block">Requieren reposición</span>
+            </div>
+
+            <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-md transition-shadow">
+                <div class="flex items-center justify-between text-slate-500 mb-2">
+                    <span class="text-xs font-semibold uppercase tracking-wider">Alta Rotación</span>
+                    <div class="p-2 bg-amber-50 text-amber-600 rounded-xl">
+                        <i class="fa-solid fa-fire text-sm"></i>
+                    </div>
+                </div>
+                <div class="text-xl sm:text-2xl font-black text-slate-900" id="kpiAltaRotacion">4 Productos</div>
+                <span class="text-[11px] text-emerald-600 font-medium mt-1 block">Generadores de liquidez</span>
+            </div>
+        </section>
+
+        <!-- ACCIONES RÁPIDAS Y ALERTA DESTACADA -->
+        <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            
+            <!-- REGISTRO RÁPIDO DE VENTAS (MOBILE FIRST EXTREME SIMPLICITY) -->
+            <div class="lg:col-span-2 bg-white rounded-2xl border border-slate-200/80 shadow-sm p-5 sm:p-6 flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-4">
+                        <div>
+                            <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                                <i class="fa-solid fa-bolt text-brand-500"></i> Registro Rápido de Venta
+                            </h2>
+                            <p class="text-xs text-slate-500">Selecciona el producto y registra la venta con un solo toque.</p>
+                        </div>
+                        <button onclick="openModalNuevoProducto()" class="bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold px-3 py-2 rounded-xl transition-colors flex items-center gap-1.5 shadow-sm">
+                            <i class="fa-solid fa-plus"></i> Nuevo Producto
+                        </button>
+                    </div>
+
+                    <!-- Buscador en tiempo real -->
+                    <div class="relative mb-4">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                        <input type="text" id="salesSearchInput" placeholder="Buscar producto por nombre o categoría..." 
+                               class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-all"
+                               oninput="renderQuickSalesGrid()">
+                    </div>
+
+                    <!-- Grid de Botones Gigantes de Venta Rápida -->
+                    <div id="quickSalesGrid" class="grid grid-cols-2 sm:grid-cols-3 gap-3 max-h-[280px] overflow-y-auto pr-1">
+                        <!-- Renderizado Dinámico por JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- MÓDULO DE ALERTAS DE REPOSICIÓN Y SUGERIDO AUTOMÁTICO -->
+            <div class="bg-gradient-to-br from-slate-900 via-slate-900 to-rose-950 text-white rounded-2xl p-5 sm:p-6 shadow-xl flex flex-col justify-between border border-rose-900/30">
+                <div>
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="bg-rose-500/20 border border-rose-500/40 text-rose-300 text-[11px] font-bold px-3 py-1 rounded-full uppercase tracking-wider flex items-center gap-1.5">
+                            <i class="fa-solid fa-bell animate-bounce"></i> Alertas Activas
+                        </span>
+                        <span class="text-xs text-slate-400 font-medium">Módulo de Reposición</span>
+                    </div>
+
+                    <h3 class="text-xl font-extrabold text-white mb-2">Stock Crítico Detectado</h3>
+                    <p class="text-xs text-slate-300 mb-4 leading-relaxed">
+                        Los siguientes productos han caído por debajo del umbral mínimo de seguridad.
+                    </p>
+
+                    <!-- Lista de productos críticos -->
+                    <div id="criticalList" class="space-y-2 mb-6 max-h-[160px] overflow-y-auto pr-1">
+                        <!-- Renderizado Dinámico por JS -->
+                    </div>
+                </div>
+
+                <!-- Botón de Sugerido a Proveedor -->
+                <button onclick="generarSugeridoCompra()" class="w-full bg-gradient-to-r from-brand-500 to-emerald-600 hover:from-brand-600 hover:to-emerald-700 text-slate-950 font-extrabold text-sm py-3.5 px-4 rounded-xl shadow-lg shadow-brand-500/20 transition-all transform active:scale-98 flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-file-invoice"></i> Generar Sugerido a Proveedor
+                </button>
+            </div>
+        </section>
+
+        <!-- TABLA PRINCIPAL DE CONTROL DE INVENTARIOS -->
+        <section class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
+            <!-- Header de Tabla con Filtros -->
+            <div class="p-4 sm:p-6 border-b border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                    <h2 class="text-lg font-bold text-slate-900">Control de Inventario en Tiempo Real</h2>
+                    <p class="text-xs text-slate-500">Listado de productos, clasificación de rotación y disponibilidad.</p>
+                </div>
+
+                <!-- Filtros -->
+                <div class="flex flex-wrap items-center gap-2">
+                    <button onclick="filterTable('todos')" id="btnFilterTodos" class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-900 text-white transition-colors">Todos</button>
+                    <button onclick="filterTable('critico')" id="btnFilterCritico" class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors">Agotados / Críticos</button>
+                    <button onclick="filterTable('alta')" id="btnFilterAlta" class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors">Alta Rotación</button>
+                    <button onclick="filterTable('baja')" id="btnFilterBaja" class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors">Baja Rotación</button>
+                </div>
+            </div>
+
+            <!-- Tabla de Productos -->
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-slate-50/80 text-slate-500 text-[11px] uppercase font-bold tracking-wider border-b border-slate-100">
+                            <th class="py-3.5 px-4 sm:px-6">Producto</th>
+                            <th class="py-3.5 px-4">Categoría</th>
+                            <th class="py-3.5 px-4 text-center">Stock Actual</th>
+                            <th class="py-3.5 px-4">Precio Venta</th>
+                            <th class="py-3.5 px-4">Rotación</th>
+                            <th class="py-3.5 px-4">Estado</th>
+                            <th class="py-3.5 px-4 text-right">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="inventoryTableBody" class="divide-y divide-slate-100 text-sm">
+                        <!-- Renderizado Dinámico por JS -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER INSTITUCIONAL -->
+    <footer class="bg-white border-t border-slate-200 py-6 mt-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
+            <div class="flex items-center space-x-2">
+                <span class="font-bold text-slate-800">Stocka</span>
+                <span>•</span>
+                <span>Creación de Empresas 1 - CUN 2026</span>
+            </div>
+            <div>
+                <span>Prototipo de Alta Fidelidad | Ingenieria de Sistemas</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- MODAL REGISTRAR NUEVO PRODUCTO -->
+    <div id="modalProduct" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl transform transition-all border border-slate-100 space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                    <i class="fa-solid fa-box-open text-brand-500"></i> Agregar Nuevo Producto
+                </h3>
+                <button onclick="closeModalNuevoProducto()" class="text-slate-400 hover:text-slate-600 p-1 rounded-lg">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <form id="formAddProduct" onsubmit="saveNewProduct(event)" class="space-y-3">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Nombre del Producto</label>
+                    <input type="text" id="newProdName" required placeholder="Ej. Aceite Vegetal 1L" class="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 outline-none">
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Categoría</label>
+                        <select id="newProdCategory" class="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 outline-none">
+                            <option value="Abarrotes">Abarrotes</option>
+                            <option value="Lácteos">Lácteos</option>
+                            <option value="Bebidas">Bebidas</option>
+                            <option value="Aseo">Aseo</option>
+                            <option value="Panadería">Panadería</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Precio ($ COP)</label>
+                        <input type="number" id="newProdPrice" required placeholder="7500" class="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 outline-none">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Stock Inicial</label>
+                        <input type="number" id="newProdStock" required placeholder="12" class="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Stock Mínimo (Alerta)</label>
+                        <input type="number" id="newProdMin" required placeholder="5" class="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 outline-none">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Nivel de Rotación Estimado</label>
+                    <select id="newProdRotation" class="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 outline-none">
+                        <option value="Alta">Alta Rotación (Venta diaria)</option>
+                        <option value="Baja">Baja Rotación (Estancado/Lento)</option>
+                    </select>
+                </div>
+
+                <div class="pt-2 flex gap-2 justify-end">
+                    <button type="button" onclick="closeModalNuevoProducto()" class="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200">Cancelar</button>
+                    <button type="submit" class="px-4 py-2 rounded-xl text-xs font-bold bg-brand-500 hover:bg-brand-600 text-slate-950 shadow-sm">Guardar en Sistema</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL VER SUGERIDO DE COMPRA A PROVEEDOR -->
+    <div id="modalSugerido" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-100 space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                <div class="flex items-center gap-2">
+                    <div class="p-2 bg-brand-50 text-brand-600 rounded-xl">
+                        <i class="fa-solid fa-file-invoice text-lg"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-base font-bold text-slate-900">Sugerido Automático de Pedido</h3>
+                        <p class="text-xs text-slate-500">Orden de reposición generada por Stocka</p>
+                    </div>
+                </div>
+                <button onclick="closeModalSugerido()" class="text-slate-400 hover:text-slate-600 p-1 rounded-lg">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <div class="bg-slate-50 p-3 rounded-xl text-xs space-y-1">
+                <div class="flex justify-between text-slate-600"><span>Proveedor:</span> <span class="font-semibold text-slate-800">Distribuidora Central de Abastos</span></div>
+                <div class="flex justify-between text-slate-600"><span>Comercio:</span> <span class="font-semibold text-slate-800">Tienda Don Carlos</span></div>
+                <div class="flex justify-between text-slate-600"><span>Fecha de Generación:</span> <span class="font-semibold text-slate-800" id="sugeridoFecha">Hoy</span></div>
+            </div>
+
+            <!-- Lista de reposición -->
+            <div id="sugeridoOrderItems" class="divide-y divide-slate-100 max-h-[200px] overflow-y-auto text-xs">
+                <!-- Render dinámico -->
+            </div>
+
+            <div class="bg-emerald-50 border border-emerald-200/80 p-3 rounded-xl text-xs text-emerald-900 flex items-center justify-between">
+                <span class="font-medium">Total estimado de reposición:</span>
+                <span class="font-extrabold text-sm text-emerald-700" id="sugeridoTotal">$0 COP</span>
+            </div>
+
+            <div class="flex gap-2 justify-end pt-2">
+                <button onclick="closeModalSugerido()" class="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200">Cerrar</button>
+                <button onclick="copyOrderToClipboard()" class="px-4 py-2 rounded-xl text-xs font-bold bg-slate-900 hover:bg-slate-800 text-white flex items-center gap-1.5">
+                    <i class="fa-regular fa-copy"></i> Copiar Pedido WhatsApp
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST NOTIFICATION FLOATING -->
+    <div id="toast" class="fixed bottom-5 right-5 z-50 bg-slate-900 text-white px-4 py-3 rounded-xl shadow-2xl flex items-center gap-3 transform translate-y-20 opacity-0 transition-all duration-300 border border-slate-700 pointer-events-none">
+        <i id="toastIcon" class="fa-solid fa-circle-check text-brand-500 text-lg"></i>
+        <span id="toastMessage" class="text-xs font-medium">Acción ejecutada correctamente.</span>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // ESTADO INICIAL DEL CATÁLOGO DE PRODUCTOS (BASE DE DATOS EN MEMORIA)
+        let products = [
+            { id: 1, name: "Aceite Vegetal 1L", category: "Abarrotes", price: 11500, stock: 2, minStock: 5, rotation: "Alta" },
+            { id: 2, name: "Arroz Sopa 1Kg", category: "Abarrotes", price: 4200, stock: 32, minStock: 10, rotation: "Alta" },
+            { id: 3, name: "Leche Entera Bolsa 1L", category: "Lácteos", price: 3800, stock: 4, minStock: 8, rotation: "Alta" },
+            { id: 4, name: "Gaseosa Cola 1.5L", category: "Bebidas", price: 5000, stock: 15, minStock: 6, rotation: "Alta" },
+            { id: 5, name: "Detergente Polvo 500g", category: "Aseo", price: 6800, stock: 18, minStock: 5, rotation: "Baja" },
+            { id: 6, name: "Pan Aliñado Unidad", category: "Panadería", price: 2000, stock: 25, minStock: 10, rotation: "Alta" },
+            { id: 7, name: "Atún en Lata 170g", category: "Abarrotes", price: 7200, stock: 14, minStock: 5, rotation: "Baja" },
+            { id: 8, name: "Jabón de Baño 120g", category: "Aseo", price: 3500, stock: 9, minStock: 4, rotation: "Baja" }
+        ];
+
+        let totalVentasHoy = 184500;
+        let currentFilter = 'todos';
+
+        // INICIALIZACIÓN
+        window.onload = function() {
+            renderAll();
+        };
+
+        function renderAll() {
+            renderQuickSalesGrid();
+            renderCriticalAlerts();
+            renderInventoryTable();
+            updateKPIs();
+        }
+
+        // ACTUALIZACIÓN DE INDICADORES (KPIs)
+        function updateKPIs() {
+            document.getElementById('kpiVentas').innerText = '$' + totalVentasHoy.toLocaleString('es-CO');
+            document.getElementById('kpiTotalProds').innerText = products.length + ' Productos';
+            
+            const criticalCount = products.filter(p => p.stock <= p.minStock).length;
+            document.getElementById('kpiStockCritico').innerText = criticalCount + ' Alertas';
+
+            const highRotCount = products.filter(p => p.rotation === 'Alta').length;
+            document.getElementById('kpiAltaRotacion').innerText = highRotCount + ' Productos';
+        }
+
+        // RENDER DE GRID DE VENTA RÁPIDA
+        function renderQuickSalesGrid() {
+            const grid = document.getElementById('quickSalesGrid');
+            const search = document.getElementById('salesSearchInput').value.toLowerCase();
+            grid.innerHTML = '';
+
+            const filtered = products.filter(p => p.name.toLowerCase().includes(search) || p.category.toLowerCase().includes(search));
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `<div class="col-span-full text-center py-6 text-xs text-slate-400">No se encontraron productos.</div>`;
+                return;
+            }
+
+            filtered.forEach(product => {
+                const isCrit = product.stock <= product.minStock;
+                const card = document.createElement('div');
+                card.className = `p-3 rounded-xl border text-left flex flex-col justify-between transition-all duration-200 ${
+                    isCrit ? 'bg-rose-50/50 border-rose-200' : 'bg-slate-50 hover:bg-slate-100/80 border-slate-200/80'
+                }`;
+
+                card.innerHTML = `
+                    <div>
+                        <div class="flex justify-between items-start mb-1">
+                            <span class="text-xs font-bold text-slate-900 line-clamp-1">${product.name}</span>
+                        </div>
+                        <span class="text-[10px] font-semibold ${isCrit ? 'text-rose-600' : 'text-slate-500'} block mb-2">
+                            Stock: ${product.stock} un. ${isCrit ? '⚠️' : ''}
+                        </span>
+                    </div>
+                    <div class="flex items-center justify-between mt-1 pt-2 border-t border-slate-200/60">
+                        <span class="text-xs font-black text-slate-900">$${product.price.toLocaleString('es-CO')}</span>
+                        <button onclick="registerQuickSale(${product.id})" class="bg-brand-500 hover:bg-brand-600 text-slate-950 p-2 rounded-lg text-xs font-bold transition-all active:scale-95 flex items-center gap-1 shadow-sm">
+                            <i class="fa-solid fa-cart-plus"></i>
+                        </button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // REGISTRAR VENTA EN UN CLIC
+        function registerQuickSale(productId) {
+            const product = products.find(p => p.id === productId);
+            if (!product) return;
+
+            if (product.stock <= 0) {
+                showToast("¡Producto agotado! No hay existencias en bodega.", "rose");
+                return;
+            }
+
+            product.stock -= 1;
+            totalVentasHoy += product.price;
+
+            // Simulación de sync nube
+            triggerCloudSync();
+
+            renderAll();
+            showToast(`Venta registrada: ${product.name} (+$${product.price.toLocaleString('es-CO')})`, "emerald");
+        }
+
+        // RENDERIZAR MÓDULO DE ALERTAS Y REPOSICIÓN
+        function renderCriticalAlerts() {
+            const list = document.getElementById('criticalList');
+            list.innerHTML = '';
+
+            const criticals = products.filter(p => p.stock <= p.minStock);
+
+            if (criticals.length === 0) {
+                list.innerHTML = `<div class="p-3 bg-emerald-900/30 rounded-xl text-emerald-300 text-xs text-center border border-emerald-500/30">
+                    <i class="fa-solid fa-circle-check mr-1"></i> Todo el inventario en niveles óptimos.
+                </div>`;
+                return;
+            }
+
+            criticals.forEach(p => {
+                const item = document.createElement('div');
+                item.className = "flex items-center justify-between p-2.5 bg-rose-950/60 border border-rose-800/50 rounded-xl text-xs";
+                item.innerHTML = `
+                    <div>
+                        <span class="font-bold text-white block">${p.name}</span>
+                        <span class="text-[10px] text-rose-300">Quedan solo <strong>${p.stock}</strong> (Mín. ${p.minStock})</span>
+                    </div>
+                    <span class="bg-rose-500 text-white font-extrabold text-[10px] px-2 py-1 rounded-md uppercase">
+                        Comprar
+                    </span>
+                `;
+                list.appendChild(item);
+            });
+        }
+
+        // TABLA DE INVENTARIO COMPLETA
+        function renderInventoryTable() {
+            const tbody = document.getElementById('inventoryTableBody');
+            tbody.innerHTML = '';
+
+            let filtered = products;
+
+            if (currentFilter === 'critico') {
+                filtered = products.filter(p => p.stock <= p.minStock);
+            } else if (currentFilter === 'alta') {
+                filtered = products.filter(p => p.rotation === 'Alta');
+            } else if (currentFilter === 'baja') {
+                filtered = products.filter(p => p.rotation === 'Baja');
+            }
+
+            filtered.forEach(p => {
+                const isCritical = p.stock <= p.minStock;
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50/80 transition-colors";
+
+                tr.innerHTML = `
+                    <td class="py-3.5 px-4 sm:px-6 font-semibold text-slate-900">${p.name}</td>
+                    <td class="py-3.5 px-4 text-slate-500 text-xs">${p.category}</td>
+                    <td class="py-3.5 px-4 text-center font-bold ${isCritical ? 'text-rose-600' : 'text-slate-800'}">
+                        ${p.stock} un.
+                    </td>
+                    <td class="py-3.5 px-4 font-semibold text-slate-900">$${p.price.toLocaleString('es-CO')}</td>
+                    <td class="py-3.5 px-4">
+                        ${p.rotation === 'Alta' 
+                            ? `<span class="inline-flex items-center gap-1 bg-emerald-50 text-emerald-700 text-[11px] font-bold px-2.5 py-1 rounded-full border border-emerald-200/60"><i class="fa-solid fa-fire text-amber-500"></i> Alta</span>`
+                            : `<span class="inline-flex items-center gap-1 bg-amber-50 text-amber-700 text-[11px] font-bold px-2.5 py-1 rounded-full border border-amber-200/60"><i class="fa-solid fa-hourglass-half text-amber-600"></i> Baja</span>`
+                        }
+                    </td>
+                    <td class="py-3.5 px-4">
+                        ${isCritical
+                            ? `<span class="inline-flex items-center gap-1 bg-rose-50 text-rose-700 text-[11px] font-bold px-2.5 py-1 rounded-full border border-rose-200"><i class="fa-solid fa-circle text-[8px] text-rose-500"></i> Reposición Urgente</span>`
+                            : `<span class="inline-flex items-center gap-1 bg-slate-100 text-slate-600 text-[11px] font-medium px-2.5 py-1 rounded-full"><i class="fa-solid fa-circle text-[8px] text-emerald-500"></i> Correcto</span>`
+                        }
+                    </td>
+                    <td class="py-3.5 px-4 text-right space-x-1">
+                        <button onclick="adjustStock(${p.id}, 1)" title="Sumar Stock" class="p-1.5 bg-slate-100 hover:bg-slate-200 rounded-lg text-slate-700 transition-colors text-xs">
+                            <i class="fa-solid fa-plus"></i>
+                        </button>
+                        <button onclick="adjustStock(${p.id}, -1)" title="Restar Stock" class="p-1.5 bg-slate-100 hover:bg-slate-200 rounded-lg text-slate-700 transition-colors text-xs">
+                            <i class="fa-solid fa-minus"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // FILTRAR TABLA
+        function filterTable(type) {
+            currentFilter = type;
+            const buttons = ['btnFilterTodos', 'btnFilterCritico', 'btnFilterAlta', 'btnFilterBaja'];
+            buttons.forEach(b => {
+                const btn = document.getElementById(b);
+                btn.className = "px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors";
+            });
+
+            const activeBtnMap = {
+                'todos': 'btnFilterTodos',
+                'critico': 'btnFilterCritico',
+                'alta': 'btnFilterAlta',
+                'baja': 'btnFilterBaja'
+            };
+
+            document.getElementById(activeBtnMap[type]).className = "px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-900 text-white transition-colors";
+            renderInventoryTable();
+        }
+
+        // AJUSTAR STOCK MANUALMENTE
+        function adjustStock(id, amount) {
+            const p = products.find(prod => prod.id === id);
+            if (!p) return;
+            if (p.stock + amount < 0) return;
+
+            p.stock += amount;
+            triggerCloudSync();
+            renderAll();
+            showToast(`Stock actualizado para ${p.name}`, "emerald");
+        }
+
+        // MODAL NUEVO PRODUCTO
+        function openModalNuevoProducto() {
+            document.getElementById('modalProduct').classList.remove('hidden');
+        }
+
+        function closeModalNuevoProducto() {
+            document.getElementById('modalProduct').classList.add('hidden');
+        }
+
+        function saveNewProduct(e) {
+            e.preventDefault();
+            const name = document.getElementById('newProdName').value;
+            const category = document.getElementById('newProdCategory').value;
+            const price = parseInt(document.getElementById('newProdPrice').value);
+            const stock = parseInt(document.getElementById('newProdStock').value);
+            const minStock = parseInt(document.getElementById('newProdMin').value);
+            const rotation = document.getElementById('newProdRotation').value;
+
+            const newProd = {
+                id: Date.now(),
+                name,
+                category,
+                price,
+                stock,
+                minStock,
+                rotation
+            };
+
+            products.unshift(newProd);
+            closeModalNuevoProducto();
+            document.getElementById('formAddProduct').reset();
+            
+            triggerCloudSync();
+            renderAll();
+            showToast(`Producto '${name}' guardado exitosamente en Stocka.`, "emerald");
+        }
+
+        // GENERAR SUGERIDO A PROVEEDOR
+        function generarSugeridoCompra() {
+            const criticals = products.filter(p => p.stock <= p.minStock);
+            const container = document.getElementById('sugeridoOrderItems');
+            container.innerHTML = '';
+
+            let totalCompra = 0;
+            const now = new Date();
+            document.getElementById('sugeridoFecha').innerText = now.toLocaleDateString('es-CO');
+
+            if (criticals.length === 0) {
+                container.innerHTML = `<div class="py-4 text-center text-slate-400">No hay sugeridos pendientes. Todos tus productos tienen stock suficiente.</div>`;
+                document.getElementById('sugeridoTotal').innerText = '$0 COP';
+            } else {
+                criticals.forEach(p => {
+                    const cantidadSugerida = (p.minStock * 2) - p.stock;
+                    const costoEstimado = cantidadSugerida * (p.price * 0.7); // 70% del precio de venta aproximado costo
+                    totalCompra += costoEstimado;
+
+                    const row = document.createElement('div');
+                    row.className = "py-2.5 flex items-center justify-between";
+                    row.innerHTML = `
+                        <div>
+                            <span class="font-bold text-slate-900 block">${p.name}</span>
+                            <span class="text-slate-500 text-[11px]">Stock actual: ${p.stock} un. | Sugerido: <strong>${cantidadSugerida} un.</strong></span>
+                        </div>
+                        <span class="font-bold text-slate-900">$${costoEstimado.toLocaleString('es-CO')}</span>
+                    `;
+                    container.appendChild(row);
+                });
+
+                document.getElementById('sugeridoTotal').innerText = '$' + totalCompra.toLocaleString('es-CO') + ' COP';
+            }
+
+            document.getElementById('modalSugerido').classList.remove('hidden');
+        }
+
+        function closeModalSugerido() {
+            document.getElementById('modalSugerido').classList.add('hidden');
+        }
+
+        function copyOrderToClipboard() {
+            const criticals = products.filter(p => p.stock <= p.minStock);
+            if (criticals.length === 0) {
+                showToast("No hay elementos para copiar", "rose");
+                return;
+            }
+
+            let text = "📋 *PEDIDO DE REPOSICIÓN - STOCKA*\nComercio: Tienda Don Carlos\n----------------------------------\n";
+            criticals.forEach(p => {
+                const sugerido = (p.minStock * 2) - p.stock;
+                text += `• ${p.name}: ${sugerido} unidades\n`;
+            });
+            text += "----------------------------------\nPor favor confirmar disponibilidad y tiempo de entrega.";
+
+            // Standard Clipboard copy
+            const dummy = document.createElement("textarea");
+            document.body.appendChild(dummy);
+            dummy.value = text;
+            dummy.select();
+            document.execCommand("copy");
+            document.body.removeChild(dummy);
+
+            showToast("Pedido copiado al portapapeles. Listo para enviar por WhatsApp.", "emerald");
+        }
+
+        // SIMULACIÓN DE SINCRONIZACIÓN NUBE
+        function triggerCloudSync() {
+            const badge = document.getElementById('cloudStatus');
+            badge.className = "flex items-center space-x-2 bg-amber-950/80 border border-amber-500/40 text-amber-400 text-xs px-3 py-1.5 rounded-full font-medium transition-all duration-300";
+            badge.innerHTML = `<i class="fa-solid fa-arrows-rotate animate-spin text-xs"></i> <span>Guardando en Nube...</span>`;
+
+            setTimeout(() => {
+                badge.className = "flex items-center space-x-2 bg-emerald-950/80 border border-emerald-500/40 text-emerald-400 text-xs px-3 py-1.5 rounded-full font-medium transition-all duration-300";
+                badge.innerHTML = `
+                    <span class="relative flex h-2.5 w-2.5">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+                    </span>
+                    <span class="hidden xs:inline">Nube Sincronizada</span>
+                `;
+            }, 800);
+        }
+
+        // MOSTRAR TOAST FLOATING
+        function showToast(message, type = "emerald") {
+            const toast = document.getElementById('toast');
+            const msg = document.getElementById('toastMessage');
+            const icon = document.getElementById('toastIcon');
+
+            msg.innerText = message;
+            if (type === "emerald") {
+                icon.className = "fa-solid fa-circle-check text-brand-500 text-lg";
+            } else {
+                icon.className = "fa-solid fa-triangle-exclamation text-rose-500 text-lg";
+            }
+
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+
+            setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
